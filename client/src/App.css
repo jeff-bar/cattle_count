@@ -1,0 +1,48 @@
+/* App.css */
+
+.app {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .video-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    z-index: 0; /* Garante que o vídeo esteja atrás dos cartões */
+  }
+  
+  .video {
+    width: 100%;
+    height: auto;
+  }
+  
+  .card-container {
+    position: absolute;
+    top: -100px; /* Ajusta a posição para que parte do cartão fique acima do vídeo */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 250px);
+    max-width: 800px;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1; /* Garante que os cartões estejam acima do vídeo */
+  }
+  
+  .card {
+    background-color: #8a2be2;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 0 1.1rem; /* Define a margem lateral como aproximadamente 1 cm */
+    text-align: center; /* Centraliza o texto */
+  }
+  
+  
+  

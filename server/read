@@ -1,0 +1,17 @@
+conda create --name cattle_count python=3.11
+
+conda activate cattle_count
+
+conda deactivate
+
+
+##############
+
+
+Instalação
+
+cd yolov9
+pip install -r requirements.txt
+
+cd ..
+pip install -r requirements.txt
