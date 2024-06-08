@@ -105,28 +105,32 @@ const App = () => {
     <div className="app">
       <div className="video-container">
 
-      <video 
+        <video 
             ref={videoRef} 
             autoPlay 
             muted 
 
             style={{ 
-              width: '100%', 
-              maxWidth: '100%', 
+              width:'352px',
+              //width: '100%', 
               height: 'auto', // Mantém a proporção original do vídeo
+              maxWidth: '100%', 
               margin: '10px auto',
-              borderRadius: '15px' // Define a borda arredondada
+              borderRadius: '15px', // Define a borda arredondada
+              display: 'block' // Centraliza o vídeo dentro do contêiner
             }}  />
 
         <div className="card-container">
           <div className="card">
             <h2>Quantidade</h2>
-            <p>{amount !== null ? amount : 'Loading...'}</p> {/* Exibir o número ou 'Loading...' se o número não estiver disponível */}
+            <p>{amount !== null ? amount : 'Loading...'}</p> 
           </div>
+          {/* 
           <div className="card">
             <h2>Pesagem</h2>
-            <p>{weight !== null ? weight : 'Loading...'}</p> {/* Exibir o número ou 'Loading...' se o número não estiver disponível */}
+            <p>{weight !== null ? weight : 'Loading...'}</p> 
           </div>
+        */}
         </div>
       </div>
     </div>

@@ -23,16 +23,13 @@
   
   .card-container {
     position: absolute;
-    top: -100px; /* Ajusta a posição para que parte do cartão fique acima do vídeo */
+    top: 10px; /* Ajuste conforme necessário */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    justify-content: space-between;
-    width: calc(100% - 250px);
-    max-width: 800px;
-    padding: 20px;
-    box-sizing: border-box;
-    z-index: 1; /* Garante que os cartões estejam acima do vídeo */
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
   }
   
   .card {
