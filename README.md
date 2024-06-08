@@ -3,7 +3,11 @@
 
 Welcome to the Cattle Count Project! This project aims to count cattle using the YOLOv9 object detection model, with real-time video streaming and communication facilitated by WebRTC. The project consists of a server-client architecture where the server processes video frames for cattle detection and the client streams the video and receives the detection results.
 
-![Cattle Count Demo](video.gif)
+
+<div align="center">
+    <img src="video.gif" alt="Cattle Count Demo">
+</div>
+
 
 ## Table of Contents
 - [Introduction](#introduction)
