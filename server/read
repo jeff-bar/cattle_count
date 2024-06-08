@@ -4,10 +4,6 @@ conda activate cattle_count
 
 conda deactivate
 
-
-##############
-
-
 Instalação
 
 cd yolov9
