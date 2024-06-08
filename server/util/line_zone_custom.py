@@ -3,10 +3,34 @@ from typing import Tuple
 import numpy as np
 
 from supervision.detection.core import Detections
-from supervision.geometry.core import Point
+from supervision.geometry.core import Point, Position
 
+from util.enum_direction_movement import DirectionMovement 
 
 class LineZoneCustom(sv.LineZone):
+
+    def __init__(
+        self,
+        start: Point,
+        end: Point,
+        direction_movement: DirectionMovement,
+        interest_object: float = 0.5
+    ):
+
+        triggering_anchors =  (
+            Position.TOP_LEFT,
+            Position.TOP_RIGHT,
+            Position.BOTTOM_LEFT,
+            Position.BOTTOM_RIGHT,
+        )
+
+        if( interest_object < 0.1 or interest_object > 0.9):
+            raise ValueError("The value of {} is invalid, it must be between 0.1 and 0.9.".format(interest_object))
+
+        super().__init__(start, end, triggering_anchors)
+        self.direction_movement = direction_movement
+        self.interest_object = interest_object
+
 
     def trigger(self, detections: Detections) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -32,19 +56,32 @@ class LineZoneCustom(sv.LineZone):
         ### modificação do código original 
         half_bboxes = []
         tracker_ids = []
+
         for i, bbox in enumerate(detections.xyxy):
             x1, y1, x2, y2 = bbox
-            x2 = x1 + (x2 - x1) // 2  # Consider only half the width
+            if( self.direction_movement == DirectionMovement.TOP_TO_DOWN ):
+                y1 = int((y1 + y2) * ( 1 - self.interest_object))  # Considera a porcentagem da altura. Usa a metade inferior
+            elif( self.direction_movement == DirectionMovement.DOWN_TO_TOP):
+                y1 = int((y1 + y2) * self.interest_object) # Considera a porcentagem da altura. Usa a metade superior
+            elif( self.direction_movement == DirectionMovement.RIGHT_TO_LEFT):
+                x2 = x1 + ((x2 - x1) * ( self.interest_object))   # Considera a porcentagem da largura. Usa a metade esquerda
+            elif( self.direction_movement == DirectionMovement.LEFT_TO_LEFT):
+               x2 = x1 + ((x2 - x1) * ( 1 - self.interest_object))   # Considera a porcentagem da largura. Usa a metade direita
+            else:
+                raise ValueError("The value of {} is invalid.".format(self.direction_movement))
+                
             half_bboxes.append([x1, y1, x2, y2])
+
             if i < len(detections.tracker_id) and detections.tracker_id[i] is not None:
-                    tracker_ids.append(detections.tracker_id[i])
-        
+                tracker_ids.append(detections.tracker_id[i])
+
+
         half_bboxes = np.array(half_bboxes)
         half_detections = Detections(
             xyxy=half_bboxes,
             confidence=detections.confidence,
             class_id=detections.class_id,
-            tracker_id=np.array(tracker_ids) if tracker_ids else np.array([-1])  # Ensure tracker_id is 1D with at least one element
+            tracker_id=np.array(tracker_ids) if tracker_ids else np.array([-1]) 
         )
 
         ### fim da modificação do código original 

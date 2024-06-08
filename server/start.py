@@ -9,8 +9,9 @@ from aiortc import RTCPeerConnection, RTCSessionDescription, VideoStreamTrack
 from aiortc.mediastreams import VideoFrame
 import numpy as np
 
-
 import yt_dlp
+
+from util.enum_direction_movement import DirectionMovement
 
 import process_video as pv
 
@@ -32,8 +33,10 @@ app.add_middleware(
 CATTLE_COUNTING=0
 CATTLE_WEIGHT=0
 
-#video = "./videos/video_puro.mp4"
-video = "https://www.youtube.com/watch?app=desktop&time_continue=12&v=ZPfvxijOg80&embeds_referring_euri=http%3A%2F%2Fgadopesado.com%2F&source_ve_path=MjM4NTE&feature=emb_title"
+DIRECTION_MOVEMENT=DirectionMovement.TOP_TO_DOWN
+
+video = "./videos/1000073781.mp4"
+#video = "https://www.youtube.com/watch?app=desktop&time_continue=12&v=ZPfvxijOg80&embeds_referring_euri=http%3A%2F%2Fgadopesado.com%2F&source_ve_path=MjM4NTE&feature=emb_title"
 
 
 # Variáveis globais para armazenar a posição atual do vídeo
@@ -43,26 +46,27 @@ current_frame_number = 0
 video_lock = asyncio.Lock()
 
 
-
-
-
 class VideoTransformTrack(VideoStreamTrack):
 
-    def __init__(self, video):
+    def __init__(self, video, batch_size=4):
+        
         super().__init__()
         self.video = video
         self.cap = cv2.VideoCapture(video)
-        self.pv = pv.ProcessVideo(video)
-        self.frame_skip = 2
+        self.pv = pv.ProcessVideo(video, direction_movement=DIRECTION_MOVEMENT)
+        self.frame_skip = 1 # se colocar 1 o processamento será mais lento, porém mais preciso, 
+                            # se colocar 2 o processamento ira ser mais rápido, porém menor a precisão    
 
         if not self.cap.isOpened():
             raise ValueError(f"Cannot open video file: {video}")
 
 
     async def recv(self):
+
         global current_frame_number, last_frame_timestamp, last_frame_time_base
         try:
             async with video_lock:
+                
                 # Define o frame atual
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame_number)
 
@@ -71,7 +75,7 @@ class VideoTransformTrack(VideoStreamTrack):
                 if ret:
                     # Processa o frame se for necessário
                     if current_frame_number % self.frame_skip == 0:
-                        frame, cattle_counting, cattle_weight = self.pv.start(frame, show_analyze=False)
+                        frame, cattle_counting, cattle_weight = self.pv.start(frame, show_analyze=True)
                     else:
                         frame, cattle_counting, cattle_weight = self.pv.show(frame)
 
